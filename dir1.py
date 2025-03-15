@@ -1,31 +1,41 @@
 # Первый вход в асинхронное
 import time
+import asyncio
+# async = обозначает что функция выполняется асинхронно
+# await ставиться перед вызовом асинхр фукнции -  это ключевое слово,
+# которое используется внутри
+# асинхронной функции для ожидания результата другой асинхронной операции
+# Корутины (coroutines), или сопрограммы — это блоки кода, которые работают асинхронно
+# create_task() - для создания
 
-
-def fun1(x):
+async def fun1(x):
     print(x**2)
-    time.sleep(3)
+    await asyncio.sleep(3)
     print("fun1 finich")
 
 
-def fun2(x):
+async def fun2(x):
     print(x**0.5)
-    time.sleep(3)
+    await asyncio.sleep(3)
     print("fun2 finich")
 
 
 
 
-def main():
-    fun1(2)
-    fun2(5)
+async def main():
+    task1 = asyncio.create_task(fun1(4))
+    task2 = asyncio.create_task(fun2(4))
+    await task1
+    await task2
+    # fun1(2)
+    # fun2(5)
 
 
 
 
 print(time.strftime('%X'))
 
-main()
+asyncio.run(main())
 
 print(time.strftime('%X'))
 
