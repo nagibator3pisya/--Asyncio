@@ -22,21 +22,15 @@ async def fun2(x):
 
 
 
+
 async def main():
     task1 = asyncio.create_task(fun1(4))
     task2 = asyncio.create_task(fun2(4))
+
     await task1
     await task2
-    # fun1(2)
-    # fun2(5)
 
-
-
-
-print(time.strftime('%X'))
+    print(type(task1))
+    print(task1.__class__.__bases__)
 
 asyncio.run(main())
-
-print(time.strftime('%X'))
-
-
