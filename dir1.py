@@ -1,36 +1,51 @@
-# Первый вход в асинхронное
 import time
 import asyncio
-# async = обозначает что функция выполняется асинхронно
-# await ставиться перед вызовом асинхр фукнции -  это ключевое слово,
-# которое используется внутри
-# асинхронной функции для ожидания результата другой асинхронной операции
-# Корутины (coroutines), или сопрограммы — это блоки кода, которые работают асинхронно
-# create_task() - для создания
 
-async def fun1(x):
-    print(x**2)
-    await asyncio.sleep(3)
-    print("fun1 finich")
+stast = time.time()
 
 
-async def fun2(x):
-    print(x**0.5)
-    await asyncio.sleep(3)
-    print("fun2 finich")
+import asyncio
+import time
 
+start = time.time()  # Инициализация переменной start для измерения времени выполнения
 
+async def sleeping(n):
+    # Начало выполнения длительной операции
+    print(f'Начало выполнения длительной операции № {n}: {time.time() - start:.4f}')
 
+    # Приостановка выполнения функции на 1 секунду
+    await asyncio.sleep(1)
 
+    # Завершение длительной операции
+    print(f'Длительная операция {n} завершена')
 
 async def main():
-    task1 = asyncio.create_task(fun1(4))
-    task2 = asyncio.create_task(fun2(4))
+    # Создание списка из 30 асинхронных задач
+    tasks = [sleeping(i) for i in range(1, 6)]
 
-    await task1
-    await task2
+    # Конкурентное выполнение всех задач из списка tasks
+    # await asyncio.gather(*tasks) означает, что мы ждем завершения всех задач в списке
+    # gather позволяет запускать несколько асинхронных задач одновременно и ждать их завершения
+    all_result = await asyncio.gather(*tasks)
 
-    print(type(task1))
-    print(task1.__class__.__bases__)
+    # Вывод количества выполненных операций
+    print(f'Выполнено {len(all_result)} операций')
 
+    # Вывод общего времени выполнения программы
+    print(f'Программа завершена за : {time.time() - start:.4f}')
+
+# Запуск асинхронной функции main() в событийном цикле
 asyncio.run(main())
+
+# async def fetch_data():
+#     print("Начинаем загрузку данных")
+#     await asyncio.sleep(2)  # Имитация асинхронной операции ввода-вывода
+#     print("Данные загружены")
+#     return {'data': 123}
+#
+# async def main():
+#     tasks = [fetch_data() for _ in range(5)]
+#     results = await asyncio.gather(*tasks)
+#     print(f"Загружено {len(results)} задач")
+#
+# asyncio.run(main())
