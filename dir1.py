@@ -1,18 +1,21 @@
 import asyncio
-
-async def Coroutine1(i):
-    await asyncio.sleep(1 / i)
-    print(f'Coroutine {i} is done')
+# Секундный интервал
 
 
 
-async def  main():
-    result = [asyncio.create_task(Coroutine1(i)) for i in range(1,4)]
+async def print_with_delay(num: int):
 
-    await asyncio.gather(*result)
+    print(f'Coroutine {num} is done')
+    await asyncio.sleep(1)
 
-
+async def main():
+    tasks = [asyncio.create_task(print_with_delay(i)) for i in range(10)]
+    await asyncio.gather(*tasks)
+    # for e in range(10):
+    #     task = asyncio.create_task(print_with_delay(e))
+    #     tasks.append(task)
 asyncio.run(main())
+
 
 
 
