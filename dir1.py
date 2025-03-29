@@ -15,7 +15,7 @@ max_counts = {
     "Counter 2": 5,
     "Counter 3": 15
 }
-
+#  task1 = asyncio.create_task(counter('Counter 1', delays['Counter 1']))
 delays = { # нужно было добавить счётчик при вызове  delays['Counter 1']
     "Counter 1": 1,
     "Counter 2": 2,
@@ -41,23 +41,25 @@ counters = {
 '''
 
 
-async def counter(name: str, delay: int)-> None:
+async def counter(name: str)-> None:
 
     while counters[name] < max_counts[name]:
         counters[name] += 1 # увеличение
-        await asyncio.sleep(delay)
+        await asyncio.sleep(delays[name])
         print(f"{name}: {counters[name]}")
 
 
 
 async def main():
     #  gether() придумать
-    task1 = asyncio.create_task(counter('Counter 1', delays['Counter 1']))
-    task2 = asyncio.create_task(counter('Counter 2', delays['Counter 2']))
-    task3 = asyncio.create_task(counter('Counter 3', delays['Counter 3']))
-    await task1
-    await task2
-    await task3
+    # task1 = asyncio.create_task(counter('Counter 1', ))
+    # task2 = asyncio.create_task(counter('Counter 2', ))
+    # task3 = asyncio.create_task(counter('Counter 3',))
+    # await task1
+    # await task2
+    # await task3
+    task = [asyncio.create_task(counter(name)) for name in counters]
+    await asyncio.gather(*task)
 asyncio.run(main())
 
 
