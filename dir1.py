@@ -1,40 +1,39 @@
 import asyncio
 
-
-async def wait_for_materials(delivery_time, future: asyncio.Future):
-    '''
-    :param delivery_time:  время доставки
-    :param future:  обьект футуры
-    future: asyncio.Future - используется для удобства
-    вместо asyncio.Future.set_result
-    :return:
-    '''
-    print(f'Ожидание доставки материалов. Доставка займет {delivery_time} секунд')
-    await asyncio.sleep(delivery_time)
-    print('Материалы доставлены.')
-    future.set_result('Доставка завершина')
-
-async def menage_construction_project():
-    '''
-    Менеджер строительного проекта, который ожидает поставку материалов,
-    прежде чем продолжить работу над проектом
-    :return:
-    '''
-    # Создание обьекта
-    future_materials_delivery = asyncio.Future()
-    # Инициирование ожидание доставки материалов
-    asyncio.create_task(wait_for_materials(5,future_materials_delivery))
-    # Ожидание результата
-    await future_materials_delivery
-    # Получение и вывод результата доставки
-    delivery_result = future_materials_delivery.result()
-    print(f'Результат доставки: {delivery_result}')
-    print(f'Продолжение строительных работ')
+# Использование результатов выполнения корутин.
+async  def do_some_work_1(x, future:asyncio.Future):
+    print(f'Выполняется работа 1: {x}')
+    await asyncio.sleep(x)
+    future.set_result(x * 2)
 
 
-asyncio.run(menage_construction_project())
+async  def do_some_work_2(x, future:asyncio.Future):
+    print(f'Выполняется работа 2: {x}')
+    await asyncio.sleep(x)
+    future.set_result(x + 2)
 
+async def main():
+    # Обьекты для future для каждой задачи
+    # И для получения результата в дальнейшем
+    future_1 = asyncio.Future()
+    future_2 = asyncio.Future()
 
+    # Запус первой задачи и передаем ей Future
+    asyncio.create_task(do_some_work_1(2, future_1))
+    # Дожидаемся завершинеия первой задачи
+    await future_1
+    result_1 = future_1.result()
+
+    # Запус второй задачи и передаем ей результат первой и обьект future
+    asyncio.create_task(do_some_work_2(result_1,future_2))
+    # Дожидаемся завершинеия первой задачи
+    await future_2
+    result_2 = future_2.result()
+
+    print(f'Результат future_1: {result_1}')
+    print(f'Результат future_2: {result_2}')
+
+asyncio.run(main())
 
 
 
