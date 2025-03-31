@@ -1,43 +1,53 @@
 import asyncio
 
-# Создание обьекта future
-future = asyncio.Future()
+
+async def wait_for_materials(delivery_time, future: asyncio.Future):
+    '''
+    :param delivery_time:  время доставки
+    :param future:  обьект футуры
+    future: asyncio.Future - используется для удобства
+    вместо asyncio.Future.set_result
+    :return:
+    '''
+    print(f'Ожидание доставки материалов. Доставка займет {delivery_time} секунд')
+    await asyncio.sleep(delivery_time)
+    print('Материалы доставлены.')
+    future.set_result('Доставка завершина')
+
+async def menage_construction_project():
+    '''
+    Менеджер строительного проекта, который ожидает поставку материалов,
+    прежде чем продолжить работу над проектом
+    :return:
+    '''
+    # Создание обьекта
+    future_materials_delivery = asyncio.Future()
+    # Инициирование ожидание доставки материалов
+    asyncio.create_task(wait_for_materials(5,future_materials_delivery))
+    # Ожидание результата
+    await future_materials_delivery
+    # Получение и вывод результата доставки
+    delivery_result = future_materials_delivery.result()
+    print(f'Результат доставки: {delivery_result}')
+    print(f'Продолжение строительных работ')
 
 
-# async def exmple_task():
-#     return 'Задача выполнена'
-#
-#
-#
-# async  def main():
-#     task = asyncio.create_task(exmple_task()) # создание задачи из корутины example_task()
-#     await task  # запуск задачи и ожидание выполнения
-#     result = task.result()  # сохранение результата в переменную result
-#     print(result)
-#
-#
-# asyncio.run(main())
-
-# Установка результата для объектов Future. Метод set_result()
+asyncio.run(menage_construction_project())
 
 
-async  def simulate_long_running_task(name, dalay, future: asyncio.Future):
-    print(f'Задача {name} началась, будет выполнена за {dalay} сек')
-    await asyncio.sleep(dalay)
-    result = f'Результат задачи {name}'
-    print(f'Задача {name}, завершина')
-    future.set_result(result) # УСТАНАВЛИВАЕМ результат для Future объекта
 
 
-async def main():
-    # объект футуры
-    future = asyncio.Future()
-    # запускаем корутину , передаем future объект в функцию
-    await simulate_long_running_task('Задача 1',3,future)
-    result = future.result()
-    print(f'Результат Future: {result}')
 
-asyncio.run(main())
+
+
+
+
+
+
+
+
+
+
 
 
 
