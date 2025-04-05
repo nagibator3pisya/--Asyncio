@@ -10,7 +10,7 @@ async  def do_some_work_1(x, future:asyncio.Future):
 async  def do_some_work_2(x, future:asyncio.Future):
     print(f'Выполняется работа 2: {x}')
     await asyncio.sleep(x)
-    future.set_result(x + 2)
+    future.set_result(x + 2)d
 
 async def main():
     # Обьекты для future для каждой задачи
