@@ -1,53 +1,53 @@
 import asyncio
-
-# Использование результатов выполнения корутин.
-async  def do_some_work_1(x, future:asyncio.Future):
-    print(f'Выполняется работа 1: {x}')
-    await asyncio.sleep(x)
-    future.set_result(x * 2)
-
-
-async  def do_some_work_2(x, future:asyncio.Future):
-    print(f'Выполняется работа 2: {x}')
-    await asyncio.sleep(x)
-    future.set_result(x + 2)d
+# Методы done(),cancel(),cancelled()
+# Pending (ожидание)
 
 async def main():
-    # Обьекты для future для каждой задачи
-    # И для получения результата в дальнейшем
-    future_1 = asyncio.Future()
-    future_2 = asyncio.Future()
+    future = asyncio.Future()
+    if not future.done():
+        print('Состояние: Pending')
+    try:
+        result = future.result()
+        print(result)
+    except asyncio.InvalidStateError:
+        print('Задача ещё не выполнена. Доступа к результатам нет!')
 
-    # Запус первой задачи и передаем ей Future
-    asyncio.create_task(do_some_work_1(2, future_1))
-    # Дожидаемся завершинеия первой задачи
-    await future_1
-    result_1 = future_1.result()
 
-    # Запус второй задачи и передаем ей результат первой и обьект future
-    asyncio.create_task(do_some_work_2(result_1,future_2))
-    # Дожидаемся завершинеия первой задачи
-    await future_2
-    result_2 = future_2.result()
+async def main_Completed():
+    future = asyncio.Future()
+    future.set_result('Задача завершена')
+    result = future.result()
 
-    print(f'Результат future_1: {result_1}')
-    print(f'Результат future_2: {result_2}')
+    if future.done():
+        print('Состояние : Completed(завершено)')
+        print(f'Результат: {result} ')
+
+
+async  def main_Cancelled():
+    future = asyncio.Future()
+    future.cancel()
+    if future.cancelled():
+        print('Состояние Cancelled (Отменено)')
+    try:
+        result =future.result()
+        print(result)
+    except asyncio.CancelledError:
+        print('Задача отменена. Доступа к результатам нет')
+
+# if __name__ == '__main__':
+#     # asyncio.run(main())
+#     # asyncio.run(main_Completed())
+#     asyncio.run(main_Cancelled())
+
+
+async def set_after(fut, delay, value):
+    await asyncio.sleep(delay)
+    fut.set_result(value)
+
+async def main():
+    future = asyncio.Future()
+    asyncio.ensure_future(set_after(future, 1, 'done'))
+    result = await future
+    print(result)
 
 asyncio.run(main())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
