@@ -1,55 +1,23 @@
 import asyncio
 
+import asyncio
+import random
 
-async def first_function(x):
-    print(f"Выполняется первая функция с аргументом {x}")
-    await asyncio.sleep(1)
-    result = x + 1
-    print(f"Первая функция завершилась с результатом {result}")
-    return result
+async def waiter(future: asyncio.Future):
+    await future
+    print(f"future выполнен, результат {future.result()}. Корутина waiter() может продолжить работу")
 
+async def setter(future):
+    await asyncio.sleep(random.uniform(1, 3))
+    future.set_result(True)
 
-async def second_function(x):
-    print(f"Выполняется вторая функция с аргументом {x}")
-    await asyncio.sleep(1)
-    result = x * 2
-    print(f"Вторая функция завершилась с результатом {result}")
-    return result
-
-
-async def third_function(x):
-    print(f"Выполняется третья функция с аргументом {x}")
-    await asyncio.sleep(1)
-    result = x + 3
-    print(f"Третья функция завершилась с результатом {result}")
-    return result
-
-async def fourth_function(x):
-    print(f"Выполняется четвертая функция с аргументом {x}")
-    await asyncio.sleep(1)
-    result = x ** 2
-    print(f"Четвертая функция завершилась с результатом {result}")
-    return result
 
 async def main():
-    print("Начало цепочки асинхронных вызовов")
-    # task = asyncio.create_task(first_function(1))
-    # await task
-    # task = asyncio.create_task(second_function(task.result()))
-    # await task
-    # task = asyncio.create_task(third_function(task.result()))
-    # await task
-    # final_result = asyncio.create_task(fourth_function(task.result()))
-    # await final_result
-    # print(f"Конечный результат цепочки вызовов: {final_result.result()}")
+    future = asyncio.Future()
 
-    # второй вариант
-    result1 = await first_function(1)
-    result2 = await second_function(result1)
-    result3 = await third_function(result2)
-    final_result  = await fourth_function(result3)
-    print(f"Конечный результат цепочки вызовов: {final_result}")
-if __name__ == '__main__':
-    asyncio.run(main())
+    # Запускаем обе корутины одновременно
+    await asyncio.gather(waiter(future), setter(future))
+
+asyncio.run(main())
 
 
