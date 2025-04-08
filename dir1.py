@@ -1,34 +1,55 @@
 import asyncio
 
-async def async_operation():
-    try:
-        print("Начало асинхронной операции.")
-        await asyncio.sleep(2)
-        print("Асинхронная операция успешно завершилась.")
-    except asyncio.CancelledError:
-        print("Асинхронная операция была отменена в процессе выполнения.")
-        raise asyncio.CancelledError
+
+async def first_function(x):
+    print(f"Выполняется первая функция с аргументом {x}")
+    await asyncio.sleep(1)
+    result = x + 1
+    print(f"Первая функция завершилась с результатом {result}")
+    return result
+
+
+async def second_function(x):
+    print(f"Выполняется вторая функция с аргументом {x}")
+    await asyncio.sleep(1)
+    result = x * 2
+    print(f"Вторая функция завершилась с результатом {result}")
+    return result
+
+
+async def third_function(x):
+    print(f"Выполняется третья функция с аргументом {x}")
+    await asyncio.sleep(1)
+    result = x + 3
+    print(f"Третья функция завершилась с результатом {result}")
+    return result
+
+async def fourth_function(x):
+    print(f"Выполняется четвертая функция с аргументом {x}")
+    await asyncio.sleep(1)
+    result = x ** 2
+    print(f"Четвертая функция завершилась с результатом {result}")
+    return result
 
 async def main():
-    print("Главная корутина запущена.")
-    task = asyncio.create_task(async_operation())
-    await asyncio.sleep(0.1)
-    print("Попытка отмены Task.")
-    task.cancel()
-    try:
-        result = await task
-        print("Результат Task:", result)
-    except asyncio.CancelledError:
-        print("Обработка исключения: Task был отменен.")
+    print("Начало цепочки асинхронных вызовов")
+    # task = asyncio.create_task(first_function(1))
+    # await task
+    # task = asyncio.create_task(second_function(task.result()))
+    # await task
+    # task = asyncio.create_task(third_function(task.result()))
+    # await task
+    # final_result = asyncio.create_task(fourth_function(task.result()))
+    # await final_result
+    # print(f"Конечный результат цепочки вызовов: {final_result.result()}")
 
-
-    # Проверяем, отменился ли Task
-    if task.cancelled():
-        print("Проверка: Task был отменен.")
-    else:
-        print("Проверка: Task не был отменен.")
-    print("Главная корутина завершена.")
-
-
+    # второй вариант
+    result1 = await first_function(1)
+    result2 = await second_function(result1)
+    result3 = await third_function(result2)
+    final_result  = await fourth_function(result3)
+    print(f"Конечный результат цепочки вызовов: {final_result}")
 if __name__ == '__main__':
     asyncio.run(main())
+
+
