@@ -141,4 +141,49 @@ if __name__ == '__main__':
 Выполнение основной корутины main() также блокируется на строчкеawait my_coroutine(), а блокировка завершается когда выполнение ожидаемой корутины завершается.  
 
 - await можно сохранять результат
-- 
+```python
+import asyncio
+# await может возвращать результат
+
+async def coro():
+    await asyncio.sleep(1)
+    return 'Задача завершена'
+
+async def main():
+    result = await coro() # сохраняем в переменную результат выполнения my_coroutine() 
+    print(result)
+
+if __name__ == '__main__':
+    asyncio.run(main())
+"""
+Задача завершена
+"""
+```
+
+`await asyncio.gather(*tasks)` дожидается выполнения всех задач возвращает список результатов всех задач.
+
+```python
+import asyncio
+async def coro(num):
+    print('Начало',num)
+    await asyncio.sleep(1)
+    return f'Задача завершена {num}'
+
+async def main():
+    task = [asyncio.create_task(coro(i) )for i in range(1,6)]
+    result = await asyncio.gather(*task)
+    print(result)
+if __name__ == '__main__':
+    asyncio.run(main())
+
+"""
+Начало 1
+Начало 2
+Начало 3
+Начало 4
+Начало 5
+['Задача завершена 1', 'Задача завершена 2', 'Задача завершена 3', 'Задача завершена 4', 'Задача завершена 5']
+"""
+```
+
+
