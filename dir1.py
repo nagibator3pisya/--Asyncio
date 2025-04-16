@@ -1,23 +1,23 @@
 import asyncio
+# await может возвращать результат
 
-import asyncio
-import random
+# async def coro():
+#     await asyncio.sleep(1)
+#     return 'Задача завершена'
+#
+# async def main():
+#     result = await coro()
+#     print(result)
 
-async def waiter(future: asyncio.Future):
-    await future
-    print(f"future выполнен, результат {future.result()}. Корутина waiter() может продолжить работу")
-
-async def setter(future):
-    await asyncio.sleep(random.uniform(1, 3))
-    future.set_result(True)
-
+async def coro(num):
+    print('Начало',num)
+    await asyncio.sleep(1)
+    return f'Задача завершена {num}'
 
 async def main():
-    future = asyncio.Future()
-
-    # Запускаем обе корутины одновременно
-    await asyncio.gather(waiter(future), setter(future))
-
-asyncio.run(main())
-
+    task = [asyncio.create_task(coro(i) )for i in range(1,6)]
+    result = await asyncio.gather(*task)
+    print(result)
+if __name__ == '__main__':
+    asyncio.run(main())
 
