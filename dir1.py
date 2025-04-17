@@ -1,23 +1,26 @@
 import asyncio
-# await может возвращать результат
 
-# async def coro():
-#     await asyncio.sleep(1)
-#     return 'Задача завершена'
-#
-# async def main():
-#     result = await coro()
-#     print(result)
+# Асинхронная функция имитирующая чтение данныъ из файла
 
-async def coro(num):
-    print('Начало',num)
-    await asyncio.sleep(1)
-    return f'Задача завершена {num}'
+async def read_data_file(filename):
+    print(f'Начинаем чтение из файла {filename} ')
+    await asyncio.sleep(2) # имитация задержки для чтени файла
+    print(f'Чтение из файла {filename} завершено')
+    return f'Данные из {filename}'
 
+# Асинхронная функция имитирующая отпр данных в интер
+async def send_data_to_internet(data):
+    print('Начинаем отправку данных в интернет')
+    await asyncio.sleep(3) # имитация задержки для отправки данных
+    print('Отправка данных в интернет завершена')
+
+# Главная асинк функция
 async def main():
-    task = [asyncio.create_task(coro(i) )for i in range(1,6)]
-    result = await asyncio.gather(*task)
-    print(result)
+    filename = 'exemple.txt'
+    # чтение данных из файла
+    file_data = await read_data_file(filename)
+    await send_data_to_internet(file_data)
+
 if __name__ == '__main__':
     asyncio.run(main())
 
