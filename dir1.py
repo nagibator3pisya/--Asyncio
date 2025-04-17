@@ -1,26 +1,35 @@
 import asyncio
 
-# Асинхронная функция имитирующая чтение данныъ из файла
+import asyncio
 
-async def read_data_file(filename):
-    print(f'Начинаем чтение из файла {filename} ')
-    await asyncio.sleep(2) # имитация задержки для чтени файла
-    print(f'Чтение из файла {filename} завершено')
-    return f'Данные из {filename}'
+async def task1():
+    print("Начинаем задачу 1")
+    await asyncio.sleep(1)
+    print("Привет из корутины task1")
+    await asyncio.sleep(1)
+    print("Задача 1 завершилась")
 
-# Асинхронная функция имитирующая отпр данных в интер
-async def send_data_to_internet(data):
-    print('Начинаем отправку данных в интернет')
-    await asyncio.sleep(3) # имитация задержки для отправки данных
-    print('Отправка данных в интернет завершена')
+async def task2():
+    print("Начинаем задачу 2")
+    await asyncio.sleep(2)
+    print("Привет из корутины task2")
+    await asyncio.sleep(2)
+    print("Задача 2 завершилась")
 
-# Главная асинк функция
+async def task3():
+    print("Начинаем задачу 3")
+    await asyncio.sleep(3)
+    print("Привет из корутины task3")
+    await asyncio.sleep(3)
+    print("Задача 3 завершилась")
+
 async def main():
-    filename = 'exemple.txt'
-    # чтение данных из файла
-    file_data = await read_data_file(filename)
-    await send_data_to_internet(file_data)
+    task_1 = asyncio.create_task(task1())
+    task_2 = asyncio.create_task(task2())
+    task_3 = asyncio.create_task(task3())
 
-if __name__ == '__main__':
-    asyncio.run(main())
+    await task_1
+    await task_2
+    await task_3
 
+asyncio.run(main())
