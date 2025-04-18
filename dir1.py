@@ -1,30 +1,81 @@
 import asyncio
-import random
+# методы asyncio
+
+# asyncio.wait_for
 
 """
-Аналогия из реалии
-event-loop Координатор отвечает за обраюотку всех заказов и отправку их на выполнения
-Клиенты :
-(код, который вызывает асинхронные функции) делают заказы (создают задачи) и передают их координатору;
-Координатор: 
-(event loop) заносит заказы (задачи) в очередь и обрабатывает их по порядку;
-Если какой-то заказ (задача) требует времени для выполнения (например, ожидание ответа от внешнего источника данных - API, БД и т.д.), координатор ставит его на паузу и переходит к следующему заказу (задаче), чтобы оптимально использовать время и ресурсы;
-Когда заказы, требующие ожидания, завершаются, координатор продолжает их обработку и возвращает результаты клиентам. 
+Этот метод позволяет установить тайм-аут на выполнение асинхронной задачи. 
+Если задача не завершится в указанное время, будет выброшено исключение TimeoutError.
 """
 
-class Pizzeria:
-    def __init__(self, name):
-        self.name = name
+# async def long_running_task():
+#     await asyncio.sleep(5)
+#     return 'Задача выполнена'
+#
+#
+# async def main():
+#     try:
+#         result = await asyncio.wait_for(long_running_task(),timeout=6)
+#         print(result)
+#     except asyncio.TimeoutError:
+#         print('Время вышло')
+#
+# asyncio.run(main())
 
-    async def make_pizz(self,order_id):
-        cook_time = random.randint(1,5) # случайное время готовки пиццы от 1 до 5
-        print(f' Пиццерия {self.name} начала готовить пиццу для заказа {order_id}')
-        await asyncio.sleep(cook_time)
-        print(f' Пиццерия {self.name} закончила готовить пиццу для заказа {order_id}')
+# '''
+# asyncio.wait()
+# Этот метод позволяет запустить несколько задач и дождаться их выполнения.
+# Он возвращает два множества: завершенные и не завершенные задачи.
+# get_name()- проверить какие задачи ожидаются
+# '''
+# async def task1():
+#     await asyncio.sleep(2)
+#     return "Task 1 completed"
+#
+# async def task2():
+#     await asyncio.sleep(4)
+#     return "Task 2 completed"
+# async def task3():
+#     await asyncio.sleep(10)
+#     return "Task 3 completed"
+#
+# async def main():
+#     tasks_1 = asyncio.create_task(task1())
+#     tasks_2 = asyncio.create_task(task2())
+#     lists = [tasks_1,tasks_2]
+#     done, pending = await asyncio.wait(lists, timeout=3)
+#
+#     for task in done:
+#         print(f"Выполнились задачи: {task.result()}")
+#
+#     for task in pending:
+#         print(f"Ожидается задача: {task.get_name()}")
+#
+# asyncio.run(main())
+# """
+# Выполнились задачи: Task 1 completed
+# Ожидается задача: Task-3
+# """
 
-async def main():
-    pizzeria = Pizzeria('Тесто и сыр')
-    task = [pizzeria.make_pizz(i) for i in range(1,6)]
-    await asyncio.gather(*task)
+# asyncio.shield()
+async def protected_task():
+    try:
+        await asyncio.sleep(5)
+        print('Задание выполнено')
+    except asyncio.CancelledError:
+        print('Задача отменена')
+        raise
 
-asyncio.run(main())
+async  def main():
+    task = asyncio.create_task(protected_task())
+    shilded_task = asyncio.shield(task)
+    await  asyncio.sleep(2)
+    shilded_task.cancel() # попытка отменить защищенную задачу
+
+    try:
+        await shilded_task
+    except asyncio.CancelledError:
+        print('Основная задача была отменена, но защищенная задача продолжается')
+    await task
+
+asyncio.run(main(),debug=True)
