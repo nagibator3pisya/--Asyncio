@@ -1,35 +1,30 @@
 import asyncio
+import random
 
-import asyncio
+"""
+Аналогия из реалии
+event-loop Координатор отвечает за обраюотку всех заказов и отправку их на выполнения
+Клиенты :
+(код, который вызывает асинхронные функции) делают заказы (создают задачи) и передают их координатору;
+Координатор: 
+(event loop) заносит заказы (задачи) в очередь и обрабатывает их по порядку;
+Если какой-то заказ (задача) требует времени для выполнения (например, ожидание ответа от внешнего источника данных - API, БД и т.д.), координатор ставит его на паузу и переходит к следующему заказу (задаче), чтобы оптимально использовать время и ресурсы;
+Когда заказы, требующие ожидания, завершаются, координатор продолжает их обработку и возвращает результаты клиентам. 
+"""
 
-async def task1():
-    print("Начинаем задачу 1")
-    await asyncio.sleep(1)
-    print("Привет из корутины task1")
-    await asyncio.sleep(1)
-    print("Задача 1 завершилась")
+class Pizzeria:
+    def __init__(self, name):
+        self.name = name
 
-async def task2():
-    print("Начинаем задачу 2")
-    await asyncio.sleep(2)
-    print("Привет из корутины task2")
-    await asyncio.sleep(2)
-    print("Задача 2 завершилась")
-
-async def task3():
-    print("Начинаем задачу 3")
-    await asyncio.sleep(3)
-    print("Привет из корутины task3")
-    await asyncio.sleep(3)
-    print("Задача 3 завершилась")
+    async def make_pizz(self,order_id):
+        cook_time = random.randint(1,5) # случайное время готовки пиццы от 1 до 5
+        print(f' Пиццерия {self.name} начала готовить пиццу для заказа {order_id}')
+        await asyncio.sleep(cook_time)
+        print(f' Пиццерия {self.name} закончила готовить пиццу для заказа {order_id}')
 
 async def main():
-    task_1 = asyncio.create_task(task1())
-    task_2 = asyncio.create_task(task2())
-    task_3 = asyncio.create_task(task3())
-
-    await task_1
-    await task_2
-    await task_3
+    pizzeria = Pizzeria('Тесто и сыр')
+    task = [pizzeria.make_pizz(i) for i in range(1,6)]
+    await asyncio.gather(*task)
 
 asyncio.run(main())
